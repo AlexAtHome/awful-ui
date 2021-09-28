@@ -1,9 +1,11 @@
 import React from "react"
+import { clearInterval } from "timers";
 import './pump.css'
 
 export interface PumpProps {
 	value?: number
 	step?: number
+	decreaseStep?: number
 	onChange?: (event: { updatedValue: number }) => void
 }
 
@@ -28,6 +30,8 @@ export class Pump extends React.Component<PumpProps, PumpState> {
 
 	private _pistonRef = React.createRef<HTMLDivElement>();
 
+	private _decreasingTimerId: NodeJS.Timeout | null = null;
+
 	constructor(props: PumpProps) {
 		super(props)
 		this.state = {
@@ -40,11 +44,21 @@ export class Pump extends React.Component<PumpProps, PumpState> {
 	componentDidMount(): void {
 		window.addEventListener('mouseup', this._mouseUpListener.bind(this))
 		window.addEventListener('mousemove', this._mouseMoveListener.bind(this))
+		this._decreasingTimerId = setInterval(() => {
+			if (this.state.value > 0) {
+				const value = this.state.value - 1
+				this.setState({ value })
+				this.props.onChange?.({
+					updatedValue: value
+				})
+			}
+		}, (this.props.decreaseStep ?? 500))
 	}
 
 	componentWillUnmount(): void {
 		window.removeEventListener('mouseup', this._mouseUpListener.bind(this))
 		window.removeEventListener('mousemove', this._mouseMoveListener.bind(this))
+		this._decreasingTimerId && clearInterval(this._decreasingTimerId)
 	}
 
 	render() {
