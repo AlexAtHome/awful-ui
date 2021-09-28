@@ -7,7 +7,7 @@ class App extends React.Component {
 		return (
 			<div className="App">
 				<figure>
-					<Pump value={10} />
+					<Pump value={0} onChange={() => console.log('it works!')} />
 					<figcaption>Pump</figcaption>
 				</figure>
 			</div>

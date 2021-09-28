@@ -4,6 +4,7 @@ import './pump.css'
 export interface PumpProps {
 	value?: number
 	step?: number
+	onChange?: (event: { updatedValue: number }) => void
 }
 
 export interface PumpState {
@@ -13,7 +14,7 @@ export interface PumpState {
 }
 
 export class Pump extends React.Component<PumpProps, PumpState> {
-	private mouseUpListener = () => {
+	private _mouseUpListener = () => {
 		if (this.state.isPumping) {
 			this._endPumping();
 		}
@@ -37,17 +38,18 @@ export class Pump extends React.Component<PumpProps, PumpState> {
 	}
 
 	componentDidMount(): void {
-		window.addEventListener('mouseup', this.mouseUpListener.bind(this))
+		window.addEventListener('mouseup', this._mouseUpListener.bind(this))
 		window.addEventListener('mousemove', this._mouseMoveListener.bind(this))
 	}
 
 	componentWillUnmount(): void {
-		window.removeEventListener('mouseup', this.mouseUpListener.bind(this))
+		window.removeEventListener('mouseup', this._mouseUpListener.bind(this))
 		window.removeEventListener('mousemove', this._mouseMoveListener.bind(this))
 	}
 
 	render() {
 		return (<div className="wrap">
+			<input type="number" hidden value={this.state.value} readOnly={true} />
 			<div className="piston" ref={this._pistonRef}>
 				<span
 					className="piston__handle"
@@ -81,12 +83,12 @@ export class Pump extends React.Component<PumpProps, PumpState> {
 		const valueToSet = updatedValue > 100 ? 100 : updatedValue < 0 ? 0 : updatedValue
 		piston.style.top = `${valueToSet}px`
 
-		if (valueToSet > 90 && this.state.isValueIncreasable) {
+		if (valueToSet > 90 && this.state.isValueIncreasable && this.state.value < 100) {
 			this._increaseValue()
 			this.setState({
 				isValueIncreasable: false
 			})
-		} else if (valueToSet < 10) {
+		} else if (valueToSet < 10 && this.state.value < 100) {
 			this.setState({
 				isValueIncreasable: true
 			})
@@ -99,11 +101,12 @@ export class Pump extends React.Component<PumpProps, PumpState> {
 		const updateValue = this.state.value + step
 		const valueToSet = updateValue > maxValue ? maxValue : updateValue < 0 ? 0 : updateValue
 
-		if (this.state.value <= maxValue) {
-			this.setState({
-				value: valueToSet
-			})
-		}
+		this.setState({
+			value: valueToSet
+		})
+		this.props.onChange?.({
+			updatedValue: valueToSet
+		})
 	}
 
 	private _startPumping(event: React.MouseEvent<HTMLSpanElement, MouseEvent>): void {
@@ -111,7 +114,6 @@ export class Pump extends React.Component<PumpProps, PumpState> {
 		this.setState({
 			isPumping: true
 		})
-		console.debug('_startPumping')
 	}
 
 	private _endPumping(event?: React.MouseEvent<HTMLSpanElement, MouseEvent>): void {
@@ -124,6 +126,5 @@ export class Pump extends React.Component<PumpProps, PumpState> {
 			return
 		}
 		piston.style.top = '';
-		console.debug('_endPumping')
 	}
 }
