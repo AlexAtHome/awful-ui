@@ -4,7 +4,6 @@ import './pump.css'
 export interface PumpProps {
 	value?: number
 	step?: number
-	max?: number
 }
 
 export interface PumpState {
@@ -96,7 +95,7 @@ export class Pump extends React.Component<PumpProps, PumpState> {
 
 	private _increaseValue(): void {
 		const step = this.props.step ?? 5
-		const maxValue = this.props.max ?? 100
+		const maxValue = 100
 		const updateValue = this.state.value + step
 		const valueToSet = updateValue > maxValue ? maxValue : updateValue < 0 ? 0 : updateValue
 
