@@ -21,7 +21,8 @@ module.exports = {
   ],
   "scopes": [
 		"",
-		"pump"
+		"pump",
+		"disk"
 	],
   "types": {
     "chore": {

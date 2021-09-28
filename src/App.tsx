@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import { Disk } from './components/disk';
 import { Pump } from './components/pump';
 
 class App extends React.Component {
@@ -13,6 +14,13 @@ class App extends React.Component {
 						<figcaption>Pump</figcaption>
 						<pre>
 							<code>&lt;Pump value={0} /&gt;</code>
+						</pre>
+					</figure>
+					<figure className="component">
+						<Disk />
+						<figcaption>Disk</figcaption>
+						<pre>
+							<code>&lt;Disk /&gt;</code>
 						</pre>
 					</figure>
 				</div>
